@@ -1,0 +1,6 @@
+
+@extends("app")
+@section('title','Products Categories')
+@section("content")
+
+@endsection
