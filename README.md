@@ -8,7 +8,7 @@ A full-featured system to manage customers, products, and invoices with multilin
 - Customer and product CRUD operations  
 - Dashboard with dynamic charts and statistics  
 - Print/export invoices as PDF  
-- Multi-language PDF export (Arabic & English) using Laravel DomPDF
+- Multi-language PDF export (Arabic & English) using Laravel PDF
 
 ### 👨‍💻 Role
 
@@ -19,4 +19,4 @@ Fullstack Developer
 - **Backend:** Laravel  
 - **Database:** MySQL  
 - **Frontend:** Blade, AJAX  
-- **PDF Export:** Laravel DomPDF
+- **PDF Export:** Laravel PDF
