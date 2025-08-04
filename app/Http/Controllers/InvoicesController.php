@@ -20,17 +20,27 @@ class InvoicesController extends Controller
 {
     public function index(Request $request)
     {
+        $is_invoice=true;
         $query = Invoices::query();
+        if($request->filled('quotation')){
+            $query->where("is_invoice",false)->orWhere("status",6);//status = 6 => Converted to Invoice
+            $is_invoice=false;
+        }else{
+            $query->where("is_invoice",true);
+        }
         if ($request->filled("search"))
             $query->where("id", $request->search);
         $invoices = $query->orderBy("id", "DESC")
             ->with(['items'])
             ->paginate(15);
+            
         $clients = Clients::orderBy("id", "DESC")->get();
         $products = Products::orderBy("id", "DESC")->get();
+        
         return view('invoices.index')
             ->with("invoices", $invoices)
             ->with("clients", $clients)
+            ->with("is_invoice", $is_invoice)
             ->with("products", $products)
         ;
     }
@@ -50,12 +60,15 @@ class InvoicesController extends Controller
             "client_id" => "required",
             "product_id" => "required",
             "quantity" => "required",
+            "is_invoice" => "required|in:1,0",
             "without_vat" => "required",
         ]);
         $product = Products::find($request->product_id);
         $invoice = Invoices::create([
             "client_id" => $request->client_id,
             "date" => $request->date,
+            "is_invoice"=>$request->is_invoice,
+            "status"=>$request->is_invoice  ? 0 : 3,
         ]);
         $total = $request->with_vat > 0 ? $request->with_vat * $request->quantity : $request->without_vat * $request->quantity;
         InvoiceItems::create([
@@ -129,6 +142,8 @@ class InvoicesController extends Controller
 
     // Update the status
     $invoice->status = $status;
+    if($status==6)
+        $invoice->is_invoice=1;
     $invoice->save();
 
     // Redirect or return response
@@ -143,7 +158,8 @@ class InvoicesController extends Controller
 
         $invoice = Invoices::where("id", $invoice_id)->with(["items", 'client'])->first();
         $pdf = Pdf::loadView('invoices.template', ["invoice" => $invoice]); // `pdf.example` refers to the Blade view file
-        return $pdf->download("INV #$invoice->id.pdf"); // Download the PDF file
+        $pdf_name = $invoice->is_invoice ? " #INV-$invoice->id.pdf" :" #QTN-$invoice->id.pdf";
+        return $pdf->download($pdf_name ); // Download the PDF file
     }
 
 

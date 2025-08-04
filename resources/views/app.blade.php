@@ -34,8 +34,9 @@
             <div class="logo"><a href="/"><img src="{{asset('assets/static/logo.png')}}" alt=""></a></div>
             <div class="links">
                 <a href="{{route('home')}}" class="{{Request::is('/') ? 'active' : ''}}">Overview</a>
-                <a href="{{route('invoices')}}" class="{{Request::is('invoices') ? 'active' : ''}}">Invoices</a>
+                <a href="{{ route('invoices') }}" class="{{ Request::is('invoices') && !request()->has('quotation') ? 'active' : '' }}">Invoices</a>
                 <a href="{{route('clients')}}" class="{{Request::is('clients') ? 'active' : ''}}">Clients</a>
+                <a href="{{ route('invoices', ['quotation' => 'all']) }}" class="{{ Request::is('invoices') && request('quotation') == 'all' ? 'active' : '' }}">Quotation</a>
                 <a href="{{route('categories')}}" class="{{Request::is('categories') ? 'active' : ''}}">Categories</a>
                 <a href="{{route('products')}}" class="{{Request::is('products') ? 'active' : ''}}">Products</a>
             </div>

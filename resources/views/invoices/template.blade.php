@@ -4,10 +4,10 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>INV-#{{$invoice->id}}</title>
+    <title>INV-#{{ $invoice->id }}</title>
     <style>
         body {
-            font-family:  'DejaVu Sans', 'XBRiyaz', sans-serif;
+            font-family: 'DejaVu Sans', 'XBRiyaz', sans-serif;
             color: #4e5e6a;
             margin: 0;
             padding: 0;
@@ -124,25 +124,27 @@
 <body>
     <section class="invoices">
         <div class="invoice-left">
-            <img src="{{request()->getSchemeAndHttpHost()}}/assets/static/logo.png" alt="Company Logo">
+            <img src="{{ request()->getSchemeAndHttpHost() }}/assets/static/logo.png" alt="Company Logo">
 
             <div class="text-bold" style="margin-top: 10px;">Concord Home Appliances</div>
             <div>Phone: +961 76 622 149</div>
             <!-- <div>Email: info@concord.com</div> -->
-            <div>Website: <a href="https://concordonlinestore.com/" target="_blank" style="color: #4e5e6a;">concordonlinestore.com</a></div>
+            <div>Website: <a href="https://concordonlinestore.com/" target="_blank"
+                    style="color: #4e5e6a;">concordonlinestore.com</a></div>
             <div style="margin-top: 10px;">
                 <div style="margin: 0;"> <b>Bill To</b></div>
-                <div style="margin: 0;"><strong>{{$invoice->client->name}}</strong></div>
-                <p>{{$invoice->client->address}}</p>
+                <div style="margin: 0;"><strong>{{ $invoice->client->name }}</strong></div>
+                <p>{{ $invoice->client->address }}</p>
 
             </div>
         </div>
         <div class="invoice-right">
             <div class="text-right">
-                <div class="invoice-info-title"> &nbsp;INV #{{ $invoice->id }} &nbsp;</div>
-                <div>  Date : {{ \Carbon\Carbon::parse($invoice->date)->format('M d, Y') }}</div>
+                <div class="invoice-info-title"> &nbsp; {{ $invoice->is_invoice ? "#INV-$invoice->id" : "#QTN-$invoice->id"}} &nbsp;</div>
+                <div> Date : {{ \Carbon\Carbon::parse($invoice->date)->format('M d, Y') }}</div>
                 <div>
-                    <img src="{{request()->getSchemeAndHttpHost()}}/{{$invoice->items[0]->image}}" style="height:auto;width:216px;" alt="">
+                    <img src="{{ request()->getSchemeAndHttpHost() }}/{{ $invoice->items[0]->image }}"
+                        style="height:auto;width:216px;" alt="">
                 </div>
             </div>
 
@@ -152,7 +154,8 @@
 
             <table class="w-100">
                 <thead>
-                    <tr style="font-weight: bold; color: rgb(78, 94, 106); border-bottom: 1px solid #eee; border-top: 1px solid #eee;">
+                    <tr
+                        style="font-weight: bold; color: rgb(78, 94, 106); border-bottom: 1px solid #eee; border-top: 1px solid #eee;">
                         <th>Model number</th>
                         <th>Image</th>
                         <th>Volume</th>
@@ -167,41 +170,49 @@
                 </thead>
                 <tbody>
                     @php
-                    $total=0;
+                        $total = 0;
                     @endphp
-                    @foreach($invoice->items as $item)
-                    @php
-                    $total += $item->total;
-                    @endphp
-                    <tr>
-                        <td>{{$item->model_number}}</td>
-                        <td><img src="{{request()->getSchemeAndHttpHost()}}/{{$item->image}}" style="height:50px;" alt=""> </td>
-                        <td>{{$item->volume}}</td>
-                        <td>{{$item->dimensions}}</td>
-                        <td style="font-size: 10px;">{{$item->features}}</td>
-                        <td>{{$item->weight}}</td>
-                        <td>{{$item->without_vat}}$</td>
-                        <td>{{$item->with_vat  > 0 ? $item->with_vat. "$" : ' '}}</td>
-                        <td>{{$item->quantity}}</td>
-                        <td>{{$item->total}}$</td>
-                    </tr>
+                    @foreach ($invoice->items as $item)
+                        @php
+                            $total += $item->total;
+                        @endphp
+                        <tr>
+                            <td>{{ $item->model_number }}</td>
+                            <td><img src="{{ request()->getSchemeAndHttpHost() }}/{{ $item->image }}"
+                                    style="height:50px;" alt=""> </td>
+                            <td>{{ $item->volume }}</td>
+                            <td>{{ $item->dimensions }}</td>
+                            <td style="font-size: 10px;">{{ $item->features }}</td>
+                            <td>{{ $item->weight }}</td>
+                            <td>{{ $item->without_vat }}$</td>
+                            <td>{{ $item->with_vat > 0 ? $item->with_vat . "$" : ' ' }}</td>
+                            <td>{{ $item->quantity }}</td>
+                            <td>{{ $item->total }}$</td>
+                        </tr>
                     @endforeach
                     <tr>
-                            <td colspan="9" style="text-align: right;">Total</td>
-                            <td style="background-color: rgba(98, 150, 212, 1);color:white">{{ $total }}$</td>
-                        </tr>
+                        <td colspan="9" style="text-align: right;">Total</td>
+                        <td style="background-color: rgba(98, 150, 212, 1);color:white">{{ $total }}$</td>
+                    </tr>
                 </tbody>
             </table>
         </div>
         <div>
-                <h3  class="mt-3 mb-2" > General Conditions</h3>
-                <div style="font-size: 12px;"><b style="font-size: 12px;">Origin of Goods: </b> Lebanon</div>
-                <div style="font-size: 12px;"><b style="font-size: 12px;">Brand Name: </b> Concord</div>
-                <div style="font-size: 12px;"><b style="font-size: 12px;">Payment: </b> Cash in US DOLLARS</div>
-                <div style="font-size: 12px;"><b style="font-size: 12px;">Note: </b>  TVA to be paid at Sayrafa Rate</div>
-                <div style="font-size: 12px;"><b style="font-size: 12px;">Full Waranty </b> For One Year</div>
-                <div style="font-size: 12px;"><b style="font-size: 12px;">Delivery: </b> Depends on ordered quantity and desired model within 4 days after confirmaion of order</div>
-            </div>
+            <h3 class="mt-3 mb-2"> General Conditions</h3>
+            <div style="font-size: 15px;"><b style="font-size: 15px;">Origin of Goods: </b> Lebanon</div>
+            <div style="font-size: 15px;"><b style="font-size: 15px;">Brand Name: </b> Concord</div>
+            <div style="font-size: 15px;"><b style="font-size: 15px;">Payment: </b> Cash in US DOLLARS</div>
+            <div style="font-size: 15px;"><b style="font-size: 15px;">Delivery: </b>
+                {{ $invoice->is_invoice ? 'Within 4 working days' : 'Within 4 days after confirmation' }}</div>
+            @if ($invoice->is_invoice)
+                <div style="font-size: 15px;"><b style="font-size: 15px;">Full Waranty </b> For One Year</div>
+            @else
+                <div style="font-size: 15px;"><b style="font-size: 15px;"> TVA: </b> To be paid at Sayrafa Rate</div>
+                <div style="font-size: 15px;"><b style="font-size: 15px;">Note: </b> This is a quotation, not an
+                    official invoice.</div>
+            @endif
+        </div>
+
     </section>
 
 </body>
